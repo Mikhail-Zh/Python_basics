@@ -1,15 +1,14 @@
-# Переменная student_db - словарь. В качестве ключа фамилия ученика. Пример: {'Иванов': (['Иван', '1А'], {})}
-student_db = {'Иванов': (['Иван', '1А'], {'Физика': ['3', '5', '4']})}
+import json
+import os
 
 
-def set_student(data):
-    # global student_db
-    student_db[data[0]] = data[1:], {}
-    print(student_db)
+def set_student(data_list):
+    """Записывает данные ученика в словарь. Пример записи: {'Иванов': (['Иван', '1А'], {})}"""
+    student_db[data_list[0]] = data_list[1:], {}
 
 
 def set_rating(last_name, lesson, rating):
-    global student_db
+    """Добавление оценок"""
     if student_db.get(last_name) is None:
         print(f'Ученик, с фамилией {last_name} не найден')
     else:
@@ -20,7 +19,7 @@ def set_rating(last_name, lesson, rating):
 
 
 def get_student(last_name_student):
-    # global student_db
+    """Вывод данных ученика"""
     if student_db.get(last_name_student) is None:
         print(f'Ученик, с фамилией {last_name_student} не найден')
     else:
@@ -29,5 +28,15 @@ def get_student(last_name_student):
         print(*[f'{key}: {", ".join(value)}' for key, value in data[1].items()], sep='\n')
 
 
-if __name__ == '__main__':
-    print(student_db['Иванов'][1])
+def save_db():
+    """Сохранение данных учеников из словаря 'student_db' в файл формата .json"""
+    json.dump(student_db, open('db_student.json', 'w'))
+
+
+def load_db():
+    """Сохранение данных учеников из файла формата .json в словарь 'student_db'"""
+    global student_db
+    if os.stat('db_student.json').st_size == 0:
+        student_db = {}
+    else:
+        student_db = json.load(open('db_student.json'))
